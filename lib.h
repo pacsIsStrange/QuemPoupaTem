@@ -1,21 +1,21 @@
 #ifndef QUEMPOUPATEM_LIB_H
 #define QUEMPOUPATEM_LIB_H
 
- struct Clientes{
+ typedef struct{
     char nome[100];
-    char cpf[11];
+    long cpf;
     int tipo;
     float saldo;
     char senha[20];
-};
-int tamanho(struct Clientes *lc);
-int novoCliente();
-int apagaCliente();
-int listarClientes();
+} Clientes;
+int tamanho(Clientes *lc);
+void novoCliente(Clientes *cliente);
+void apagaCliente(int *tam, Clientes *lc, char cpfCliente);
+int listarClientes(int tam, Clientes *lc);
 int debito();
 int deposito();
 int extrato();
 int transferencia();
-int salvar();
+void salvar(int tam, Clientes *lc);
 
 #endif //QUEMPOUPATEM_LIB_H
