@@ -1,64 +1,155 @@
 #include "lib.h"
 #include <stdio.h>
-void novoCliente(Clientes *cliente){
-    int tipo;
-    float saldo;
-    long cpf;
-    printf("Digite o nome do cliente:\n");
-    scanf(" %99[^\n]", cliente->nome);
-    printf("Digite o CPF do cliente:\n");
-    scanf(" %ld", &cpf);
-    printf("Digite a senha do cliente:\n");
-    scanf(" %19[^\n]", cliente->senha);
-    printf("Escolha o tipo da conta do cliente:\n1. Comum\n2. Plus\n");
-    scanf("%d", &tipo);
-    printf("Digite o saldo inicial da conta do cliente:\n");
-    scanf("%f", &saldo);
-};
-int tamanho(Clientes *lc){
-    FILE *strArquivo = fopen("ListaDeClientes.bin", "rb");
-    int aux = 0;
-    if (strArquivo) {
-        while (fread(&lc[aux], sizeof(Clientes), 1, strArquivo) == 1){
-            aux++;
-        }
-        fclose(strArquivo);
-    }
-    else {
-        printf("\nERRO: Arquivo não encontrado.\n");
-    }
-    return aux;
-};
-void apagaCliente(int *tam, Clientes *lc, char cpfCliente);
-int listarClientes(int tam, Clientes *lc){
-  for(int i = 0; i < tam; i++){
-    printf("\n--- CLIENTE NUMERO %d ---\n", i+1);
-    printf("Nome: %s\n", lc[1].nome);
-    printf("CPF: %s\n", lc[i].cpf);
-    if (lc[i].tipo == 1){
-      printf("Tipo: Comum");
-    }
-    else if(lc[1].tipo == 2){
-      printf("Tipo: Plus");
-    }
-    else{
-      printf("ERRO: tipo de conta invalido.");
-    }
-    printf("Saldo: %.2f", lc[i].saldo);
-  }
-};
-int debito();
-int deposito();
-int extrato();
-int transferencia();
-void salvar(int tam, Clientes *lc){
-    FILE *strArquivo = fopen("ListaDeClientes.bin", "wb");
 
-    if (strArquivo){
-        fwrite(lc, sizeof(Clientes), tam, strArquivo);
+int novoCliente(ListaDeClientes *lc) {
+  if (lc->qtd >= TOTAL_CLIENTES)
+    return 1;
+
+  Cliente *c = &lc->clientes[lc->qtd];
+
+  printf("Digite o nome do cliente: \n");
+  scanf("%s", c->nome);
+
+  printf("Digite o CPF do cliente: \n");
+  scanf("%lld", &c->cpf);
+
+  printf("Digite o tipo da conta do cliente: \n");
+  scanf("%d", &c->tipo);
+
+  printf("Digite o valor inicial da conta do cliente: \n");
+  scanf("%f", &c->saldo);
+
+  printf("Digite a senha do cliente: \n");
+  scanf("%s", c->senha);
+
+  lc->qtd++;
+
+  return 0;
+}
+
+int apagaCliente(ListaDeClientes *lc) {
+  if (lc->qtd == 0) {
+    return 1;
+  }
+  int auxBool = 0;
+  int auxPos = (lc->qtd + 1);
+  long long int cpf;
+  printf("Digite o cpf do cliente que deseja deletar: \n");
+  scanf("%lli", &cpf);
+  // printf("cpf base = %lli\n", cpf);
+  for (int i = 0; i < lc->qtd; i++) {
+    // printf("for i = %d\n", i);
+    // printf("cpf = %lli\n", lc->clientes[i].cpf);
+    // printf("cpf base = %lli\n", cpf);
+    if (lc->clientes[i].cpf == cpf) {
+      auxPos = i;
+      printf("Cpf encontrado na posicao %d (auxpos = %d)\n", i, auxPos);
     }
-    else{
-        printf("\nERRO: Arquivo nao encontrado.\n");
+  }
+
+  for (; auxPos < lc->qtd - 1; auxPos++) {
+    copiaString(lc->clientes[auxPos].nome, lc->clientes[auxPos + 1].nome);
+    lc->clientes[auxPos].cpf = lc->clientes[auxPos + 1].cpf;
+    lc->clientes[auxPos].tipo = lc->clientes[auxPos + 1].tipo;
+    lc->clientes[auxPos].saldo = lc->clientes[auxPos + 1].saldo;
+    copiaString(lc->clientes[auxPos].senha, lc->clientes[auxPos + 1].senha);
+  }
+
+  lc->qtd--;
+
+  return 0;
+}
+int listarClientes(ListaDeClientes *lc) {
+  if (lc->qtd == 0)
+    return 1;
+
+  for (int i = 0; i < lc->qtd; i++) {
+    printf("--- CLIENTE NUMERO %d ---\nNome: %s\nCPF: %lld\nSaldo: %f\n", i + 1,
+           lc->clientes[i].nome, lc->clientes[i].cpf, lc->clientes[i].saldo);
+    if (lc->clientes[i].tipo == 1) {
+      printf("Tipo: Comum\n");
+    } else if (lc->clientes[i].tipo == 2) {
+      printf("Tipo: Plus\n");
+    } else {
+      printf("Tipo invalido\n");
     }
-    fclose(strArquivo);
+  }
+
+  return 0;
+}
+
+int debito(ListaDeClientes *lc, long long int cpf, char *senha, float valor) {
+  int auxPos;
+  int auxBool;
+  printf("AAA");
+  for (int i = 0; i < lc->qtd; i++) {
+    printf("%lld", lc[i].clientes->cpf);
+    printf("%s", lc[i].clientes->senha);
+    if (lc[i].clientes->cpf == cpf && lc[i].clientes->senha == senha) {
+      printf("AAA");
+      auxPos = i;
+      auxBool = 1;
+    }
+  }
+  printf("Posicao do cliente = %d", auxPos);
+  if (auxBool == 0) {
+    return 1;
+  } else if (auxBool != 1 && auxBool != 0) {
+    return 2;
+  }
+  int saldo = lc[auxPos].clientes->saldo;
+  lc[auxPos].clientes->saldo = saldo - valor;
+  return 0;
 };
+
+int deposito(ListaDeClientes *lc, long long int cpf, float valor);
+
+int transferencia(ListaDeClientes *lc, long long int cpfOrigem,
+                  const char *senha, long long int cpfDestino, float valor);
+
+int carregar(ListaDeClientes *lc, char *strArquivo) {
+  FILE *f = fopen(strArquivo, "rb");
+  if (f == NULL)
+    return 1;
+
+  fread(lc, sizeof(ListaDeClientes), 1, f);
+  fclose(f);
+
+  return 0;
+}
+
+int salvar(ListaDeClientes *lc, char *strArquivo) {
+  FILE *f = fopen(strArquivo, "wb");
+  if (f == NULL)
+    return 1;
+
+  fwrite(lc, sizeof(ListaDeClientes), 1, f);
+  fclose(f);
+
+  return 0;
+}
+
+int copiaString(char string1[], char string2[]) {
+  int t1 = tamanho(string1);
+  int len = t1;
+  int t2 = tamanho(string2);
+  if (t2 < t1) {
+    printf("Erro: string receptora menor do que o necessário");
+  } else {
+    for (int i = 0; i < len; i++) {
+      string2[i] = string1[i];
+    }
+  }
+}
+
+void exibeMenu() {
+  printf("--- MENU ---\n");
+  printf("1. Cadastrar cliente\n");
+  printf("2. Deletar cliente\n");
+  printf("3. Listar clientes\n");
+  printf("4. Debito\n");
+  printf("5. Deposito\n");
+  printf("6. Extrato\n");
+  printf("7. Transferencia entre contas\n");
+  printf("0. Sair\n");
+}
