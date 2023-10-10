@@ -1,21 +1,27 @@
-#ifndef QUEMPOUPATEM_LIB_H
-#define QUEMPOUPATEM_LIB_H
+#define TOTAL_CLIENTES 1000
 
- typedef struct{
-    char nome[100];
-    long cpf;
-    int tipo;
-    float saldo;
-    char senha[20];
-} Clientes;
-int tamanho(Clientes *lc);
-void novoCliente(Clientes *cliente);
-void apagaCliente(int *tam, Clientes *lc, char cpfCliente);
-int listarClientes(int tam, Clientes *lc);
-int debito();
-int deposito();
-int extrato();
-int transferencia();
-void salvar(int tam, Clientes *lc);
+typedef struct {
+  char nome[100];
+  long long int cpf;
+  int tipo;
+  float saldo;
+  char senha[20];
+} Cliente;
 
-#endif //QUEMPOUPATEM_LIB_H
+typedef struct {
+  Cliente clientes[TOTAL_CLIENTES];
+  int qtd;
+} ListaDeClientes;
+
+int novoCliente(ListaDeClientes *lc);
+int apagaCliente(ListaDeClientes *lc);
+int listarClientes(ListaDeClientes *lc);
+int debito(ListaDeClientes *lc, long long int cpf, char *senha, float valor);
+int deposito(ListaDeClientes *lc, long long int cpf, float valor);
+int transferencia(ListaDeClientes *lc, long long int cpfOrigem,
+                  const char *senha, long long int cpfDestino, float valor);
+int carregar(ListaDeClientes *lc, char *strArquivo);
+int salvar(ListaDeClientes *lc, char *strArquivo);
+int copiaString(char string1[], char string2[]);
+
+void exibeMenu();
