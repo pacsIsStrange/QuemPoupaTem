@@ -36,11 +36,7 @@ int apagaCliente(ListaDeClientes *lc) {
   long long int cpf;
   printf("Digite o cpf do cliente que deseja deletar: \n");
   scanf("%lli", &cpf);
-  // printf("cpf base = %lli\n", cpf);
   for (int i = 0; i < lc->qtd; i++) {
-    // printf("for i = %d\n", i);
-    // printf("cpf = %lli\n", lc->clientes[i].cpf);
-    // printf("cpf base = %lli\n", cpf);
     if (lc->clientes[i].cpf == cpf) {
       auxPos = i;
       printf("Cpf encontrado na posicao %d (auxpos = %d)\n", i, auxPos);
@@ -81,25 +77,33 @@ int listarClientes(ListaDeClientes *lc) {
 int debito(ListaDeClientes *lc, long long int cpf, char *senha, float valor) {
   int auxPos;
   int auxBool;
-  printf("AAA");
   for (int i = 0; i < lc->qtd; i++) {
-    printf("%lld", lc[i].clientes->cpf);
-    printf("%s", lc[i].clientes->senha);
-    if (lc[i].clientes->cpf == cpf && lc[i].clientes->senha == senha) {
-      printf("AAA");
+    printf("for -> i = %d\n", i);
+    printf("%lld", lc->clientes[i].cpf);
+    printf("%s", lc->clientes[i].senha);
+    if (lc->clientes[i].cpf == cpf && lc->clientes[i].senha == senha) {
       auxPos = i;
       auxBool = 1;
+      printf("Posicao do cliente = %d\n", auxPos);
     }
   }
-  printf("Posicao do cliente = %d", auxPos);
+  printf("Posicao do cliente = %d\n", auxPos);
+  if (auxBool == 1) {
+    float valorFinal = valor + (valor * retornaTaxa(lc->clientes[auxPos].tipo));
+    printf("Valor final debitado: %f\n", valorFinal);
+    printf("Saldo antes: %f\n", lc->clientes[auxPos].saldo);
+    lc->clientes[auxPos].saldo = lc->clientes[auxPos].saldo - valorFinal;
+    printf("Saldo atualizado: %f\n", lc->clientes[auxPos].saldo);
+    return 0;
+  }
+
   if (auxBool == 0) {
+    printf("auxBool = 0");
     return 1;
   } else if (auxBool != 1 && auxBool != 0) {
+    printf("auxBool = %d\n", auxBool);
     return 2;
   }
-  int saldo = lc[auxPos].clientes->saldo;
-  lc[auxPos].clientes->saldo = saldo - valor;
-  return 0;
 };
 
 int deposito(ListaDeClientes *lc, long long int cpf, float valor);
@@ -129,7 +133,7 @@ int salvar(ListaDeClientes *lc, char *strArquivo) {
   return 0;
 }
 
-int copiaString(char string1[], char string2[]) {
+void copiaString(char string1[], char string2[]) {
   int t1 = tamanho(string1);
   int len = t1;
   int t2 = tamanho(string2);
@@ -152,4 +156,23 @@ void exibeMenu() {
   printf("6. Extrato\n");
   printf("7. Transferencia entre contas\n");
   printf("0. Sair\n");
+}
+
+int tamanho(char string[]) {
+  int aux = 0;
+  for (int i = 0; string[i] != '\0'; i++) {
+    aux += 1;
+  }
+  return aux;
+}
+
+float retornaTaxa(int tipo) {
+  if (tipo == 1) {
+    return 0.05;
+  } else if (tipo == 2) {
+    return 0.03;
+  } else {
+    printf("Erro desconhecido ao calcular taxa. Verificar tipo da conta do "
+           "cliente.");
+  }
 }
