@@ -22,6 +22,8 @@ int transferencia(ListaDeClientes *lc, long long int cpfOrigem,
                   const char *senha, long long int cpfDestino, float valor);
 int carregar(ListaDeClientes *lc, char *strArquivo);
 int salvar(ListaDeClientes *lc, char *strArquivo);
-int copiaString(char string1[], char string2[]);
+void copiaString(char string1[], char string2[]);
+int tamanho(char string[]);
+float retornaTaxa(int tipo);
 
 void exibeMenu();
