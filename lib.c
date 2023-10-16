@@ -76,18 +76,13 @@ int listarClientes(ListaDeClientes *lc) {
 
 int debito(ListaDeClientes *lc, long long int cpf, char *senha, float valor) {
   int auxPos;
-  int auxBool;
+  int auxBool = 0;
   for (int i = 0; i < lc->qtd; i++) {
-    printf("for -> i = %d\n", i);
-    printf("%lld", lc->clientes[i].cpf);
-    printf("%s", lc->clientes[i].senha);
     if (lc->clientes[i].cpf == cpf && lc->clientes[i].senha == senha) {
       auxPos = i;
       auxBool = 1;
-      printf("Posicao do cliente = %d\n", auxPos);
     }
   }
-  printf("Posicao do cliente = %d\n", auxPos);
   if (auxBool == 1) {
     float valorFinal = valor + (valor * retornaTaxa(lc->clientes[auxPos].tipo));
     printf("Valor final debitado: %f\n", valorFinal);
@@ -98,7 +93,6 @@ int debito(ListaDeClientes *lc, long long int cpf, char *senha, float valor) {
   }
 
   if (auxBool == 0) {
-    printf("auxBool = 0");
     return 1;
   } else if (auxBool != 1 && auxBool != 0) {
     printf("auxBool = %d\n", auxBool);
@@ -106,7 +100,25 @@ int debito(ListaDeClientes *lc, long long int cpf, char *senha, float valor) {
   }
 };
 
-int deposito(ListaDeClientes *lc, long long int cpf, float valor);
+int deposito(ListaDeClientes *lc, long long int cpf, float valor) {
+  int auxPos;
+  int auxBool = 0;
+  for (int i = 0; i < lc->qtd; i++) {
+    if (lc->clientes[i].cpf == cpf) {
+      auxPos = i;
+      auxBool = 1;
+    }
+  }
+  if (auxBool == 0) {
+    return 1;
+  }
+  if (auxBool == 1) {
+    printf("Saldo antes: %f\n", lc->clientes[auxPos].saldo);
+    lc->clientes[auxPos].saldo = lc->clientes[auxPos].saldo + valor;
+    printf("Saldo atualizado: %f\n", lc->clientes[auxPos].saldo);
+    return 0;
+  }
+};
 
 int transferencia(ListaDeClientes *lc, long long int cpfOrigem,
                   const char *senha, long long int cpfDestino, float valor);
