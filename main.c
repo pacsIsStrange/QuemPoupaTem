@@ -1,17 +1,60 @@
-#include <stdio.h>
 #include "lib.h"
-
-struct Clientes lc[1000];
+#include <stdio.h>
 
 int main() {
-    int auxBool = 0, opcao, tam;
-    tam = tamanho(lc);
+  ListaDeClientes lc;
 
-    while (1) {
-        printf("Seja bem vindo ao programa Quem Poupa Tem!!\n");
-        printf("Escolha uma opcao:\n1.Novo Cliente \n2.Apaga cliente \n3.Listar clientes\n4.Debito\n5.Deposito\n6.Extrato\n7.Transferencia Entre Contas\n0.Sair\n");
+  char strArquivoClientes[] = "ListaDeClientes.bin";
+  int codAux, opcao;
+
+  codAux = carregar(&lc, strArquivoClientes);
+
+  if (codAux != 0) {
+    printf("lista de tarefas nao carregada");
+    lc.qtd = 0;
+  }
+
+  do {
+    exibeMenu();
+    scanf("%d", &opcao);
+
+    if (opcao == 0) {
+    } else if (opcao == 1) {
+      codAux = novoCliente(&lc);
+      if (codAux == 1)
+        printf("ERRO: lista de clientes cheia, apague um cliente para "
+               "cadastrar um novo.\n");
+    } else if (opcao == 2) {
+      codAux = apagaCliente(&lc);
+      if (codAux == 1)
+        printf("ERRO: nao existem tarefas para deletar\n");
+      else if (codAux == 2)
+        printf("ERRO: posicao da tarefa invalida\n");
+    } else if (opcao == 3) {
+      codAux = listarClientes(&lc);
+      if (codAux == 1)
+        printf("erro ao listar tarefas: nao existem tarefas para listar\n");
+    } else if (opcao == 4) {
+      long long int cpf;
+      float valor = 0;
+      char senha;
+      printf("Digite o CPF do cliente: \n");
+      scanf("%lld", &cpf);
+      printf("Digite a senha do cliente: \n");
+      scanf("%s", &senha);
+      printf("Digite o valor que sera debitado: \n");
+      scanf("%f", &valor);
+      printf("AAA");
+      codAux = debito(&lc, cpf, &senha, valor);
+      printf("BBB");
+      if (codAux == 1)
+        printf("ERRO: CPF nao encontrado\n");
+    } else if (codAux == 2) {
+      printf("Erro desconhecido\n");
     }
+  } while (opcao != 0);
 
-    return 0;
+  codAux = salvar(&lc, strArquivoClientes);
+  if (codAux != 0)
+    printf("erro ao salvar tarefas em arquivo");
 }
-
