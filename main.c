@@ -51,7 +51,7 @@ int main() {
         printf("Operacao realizada com sucesso\n");
       }
       if (codAux == 1) {
-        printf("ERRO: CPF nao encontrado\n");
+        printf("ERRO: CPF nao encontrado ou senha incorreta\n");
       }
     } else if (opcao == 5) {
       long long int cpf;
@@ -62,11 +62,36 @@ int main() {
       scanf("%f", &valor);
       codAux = deposito(&lc, cpf, valor);
       if (codAux == 0) {
-        printf("Operacao realizada com sucesso");
+        printf("Operacao realizada com sucesso\n");
       }
       if (codAux == 1) {
         printf("ERRO: CPF nao encontrado\n");
       }
+    } else if (opcao == 7){
+      long long int cpfOrigem;
+      long long int cpfDestino;
+      char senha;
+      float valor = 0;
+      printf("Digite o valor que sera transferido: \n");
+      scanf("%f", &valor);
+      printf("Digite o CPF do cliente de origem: \n");
+      scanf("%lli", &cpfOrigem);
+      printf("Digite a senha do cliente de origem: \n");
+      scanf("%s", &senha);
+      printf("Digite o CPF do cliente de destino: \n");
+      scanf("%lli", &cpfDestino);
+      codAux = transferencia(&lc, cpfOrigem, cpfDestino, valor);
+      if (codAux == 0) {
+        printf("Operacao realizada com sucesso");
+      } else if(codAux == 1){
+        printf("ERRO: CPF de origem e destino nao encontrados\n");
+      } else if(codAux == 2){
+        printf("ERRO: CPF de destino nao encontrado: \n");
+      } else if (codAux == 3){
+        printf("ERRO: CPF de origem nao encontrado ou senha incorreta: \n");
+      } else if (codAux == 4){
+        printf("ERRO: desconhecido\n");
+      }  
     }
   } while (opcao != 0);
 
