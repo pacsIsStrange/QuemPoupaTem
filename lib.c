@@ -112,7 +112,7 @@ int deposito(ListaDeClientes *lc, long long int cpf, float valor) {
   if (auxBool == 0) {
     return 1;
   }
-  if (auxBool == 1) {
+  else if (auxBool == 1) {
     printf("Saldo antes: %f\n", lc->clientes[auxPos].saldo);
     lc->clientes[auxPos].saldo = lc->clientes[auxPos].saldo + valor;
     printf("Saldo atualizado: %f\n", lc->clientes[auxPos].saldo);
@@ -120,14 +120,54 @@ int deposito(ListaDeClientes *lc, long long int cpf, float valor) {
   }
 };
 
-int transferencia(ListaDeClientes *lc, long long int cpfOrigem,
-                  const char *senha, long long int cpfDestino, float valor);
+int transferencia(ListaDeClientes *lc, long long int cpfOrigem, long long int cpfDestino, float valor){
+  printf("CPF origem = %lli\n", cpfOrigem);
+  printf("CPF destino = %lli\n", cpfDestino);
+  int auxPosOrigem = 0;
+  int auxPosDestino = 0;
+  int auxBoolOrigem = 0;
+  int auxBoolDdestino = 0;
+  for (int i = 0; i < lc->qtd; i++) {
+    printf("i = %d\n", i);
+    printf("CPF = %lli\n", lc->clientes[i].cpf);
+    printf("Senha (i) = %s", lc->clientes[i].senha);
+    if (lc->clientes[i].cpf == cpfOrigem) {
+      printf("AAA");
+      auxPosOrigem = i;
+    }
+    else if(lc->clientes[i].cpf == cpfDestino){
+      printf("BBB");
+      auxPosDestino = i;
+      auxBoolDdestino = 1;
+    }
+  }
+  if (auxBoolOrigem == 0 && auxBoolDdestino == 0) {
+    return 1;
+  }
+  else if (auxBoolOrigem == 1 && auxBoolDdestino == 0) {
+    return 2;
+  }
+  else if (auxBoolOrigem == 0 && auxBoolDdestino == 1) {
+    return 3;
+  }
+  else if (auxBoolOrigem == 1 && auxBoolDdestino == 1) {
+    float valorDebito = valor + retornaTaxa(lc->clientes[auxPosOrigem].tipo);
+    printf("Saldo (origem) antes da transferencia: %f\n", lc->clientes[auxPosOrigem].saldo);
+    lc->clientes[auxPosOrigem].saldo = lc->clientes[auxPosOrigem].saldo - valorDebito;
+    printf("Saldo (origem) depois da transferência: %f\n-------\n", lc->clientes[auxPosOrigem].saldo);
+    printf("Saldo (destino) antes da transferencia: %f\n", lc->clientes[auxPosDestino].saldo);
+    lc->clientes[auxPosDestino].saldo = lc->clientes[auxPosDestino].saldo + valor;
+    printf("Saldo (destino) depois da transferencia: %f\n", lc->clientes[auxPosDestino].saldo);
+    return 0;
+  }
+  else {return 4;}
+};
 
 int carregar(ListaDeClientes *lc, char *strArquivo) {
   FILE *f = fopen(strArquivo, "rb");
-  if (f == NULL)
+  if (f == NULL){
     return 1;
-
+  }
   fread(lc, sizeof(ListaDeClientes), 1, f);
   fclose(f);
 
@@ -136,9 +176,9 @@ int carregar(ListaDeClientes *lc, char *strArquivo) {
 
 int salvar(ListaDeClientes *lc, char *strArquivo) {
   FILE *f = fopen(strArquivo, "wb");
-  if (f == NULL)
+  if (f == NULL){
     return 1;
-
+  }
   fwrite(lc, sizeof(ListaDeClientes), 1, f);
   fclose(f);
 
