@@ -197,25 +197,43 @@ int salvarExtrato(Extrato *ext, char *strArquivo) {
 
   return 0;
 }
-int registrarExtrato(Extrato *ext, char descricao[20], int valor,
-double taxa, long long int cpf, char *strArquivo){
-  FILE *f = fopen(strArquivo, "w");
-  if (f == NULL)
-    return 1;
+int registrarExtrato(ListaDeClientes *c, char descricao[20], double valor,
+double taxa, long long int cpf){
+  for(int i = 0; i<c->qtd; i++){
+    if(c->clientes[i].cpf == cpf){
+      sprintf(c->clientes[i].ext.operacoes[++c->clientes[i].ext.qtd].descricao, "%s", descricao);
+      c->clientes[i].ext.operacoes[c->clientes[i].ext.qtd].valor = valor;
+      c->clientes[i].ext.operacoes[c->clientes[i].ext.qtd].taxa = taxa;
 
-  fwrite(ext, sizeof(Extrato), 1, f);
-  fclose(f);
-
-  Operacao *o = &ext->operacoes[ext->qtd];
-  o->&descricao = descricao;
-  o->valor = valor;
-  o->taxa = taxa;
+      c->clientes[i].ext.qtd++;
+    }
+  }
   
-  ext->qtd++;
 
   return 0;
 }
 
-int buscarExtrato(Extrato *ext, long long int cpf, char *senha){
-  
+int buscarExtrato(ListaDeClientes *c){
+  printf("Digite seu cpf:");
+  long long int cpf;
+  scanf("%lli", &cpf);
+  printf
+    ("Digite sua senha:");
+    char senha[20];
+  scanf("%s", senha);
+  for(int i = 0; i<c->qtd; i++){
+    if(c->clientes[i].cpf == cpf && c->clientes[i].senha == senha){
+      FILE *f = fopen("Extrato.txt", "w");
+      if(f == NULL){
+        printf("Arquivo falhou para ser aberto.");
+        return 1;
+      }
+      fprintf(f, "Extrato: \n");
+      for(int j = 0; j<c->clientes[i].ext.qtd; j++){
+      fprintf(f, "Descrição: %s  Taxa: %f  Valor: %lf", c->clientes[i].ext.operacoes[j].descricao, c->clientes[i].ext.operacoes[j].taxa, c->clientes[i].ext.operacoes[j].valor);
+      }
+      fclose(f);
+      return 0;
+    }
+  }
 }
