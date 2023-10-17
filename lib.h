@@ -1,21 +1,8 @@
 #define TOTAL_CLIENTES 1000
 
 typedef struct {
-  char nome[100];
-  long long int cpf;
-  int tipo;
-  float saldo;
-  char senha[20];
-} Cliente;
-
-typedef struct {
-  Cliente clientes[TOTAL_CLIENTES];
-  int qtd;
-} ListaDeClientes;
-
-typedef struct {
   char descricao[20];
-  int valor;
+  double valor;
   double taxa;
   long long int cpf;
 } Operacao;
@@ -26,8 +13,18 @@ typedef struct {
 } Extrato;
 
 typedef struct {
+  char nome[100];
+  long long int cpf;
+  int tipo;
+  float saldo;
+  char senha[20];
+  Extrato ext;
+} Cliente;
 
-} operacao;
+typedef struct {
+  Cliente clientes[TOTAL_CLIENTES];
+  int qtd;
+} ListaDeClientes;
 
 int novoCliente(ListaDeClientes *lc);
 int apagaCliente(ListaDeClientes *lc);
@@ -43,8 +40,8 @@ int tamanho(char string[]);
 float retornaTaxa(int tipo);
 int carregarExtrato(Extrato *ext, char *strArquivo);
 int salvarExtrato(Extrato *ext, char *strArquivo);
-int buscarExtrato(Extrato *ext, long long int cpf, char *senha);
-int registrarExtrato(Extrato *ext, char descricao[20], int valor,
-double taxa, long long int cpf, char *strArquivo);
+int buscarExtrato(ListaDeClientes *c);
+int registrarExtrato(ListaDeClientes *c, char descricao[20], double valor,
+double taxa, long long int cpf);
 
 void exibeMenu();
