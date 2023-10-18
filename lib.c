@@ -1,5 +1,6 @@
 #include "lib.h"
 #include <stdio.h>
+#include <string.h>>
 
 int novoCliente(ListaDeClientes *lc) {
   if (lc->qtd >= TOTAL_CLIENTES)
@@ -74,13 +75,16 @@ int listarClientes(ListaDeClientes *lc) {
   return 0;
 }
 
-int debito(ListaDeClientes *lc, long long int cpf, char *senha, float valor) {
+int debito(ListaDeClientes *lc, long long int cpf, float valor) {
+  char senha[20];
+  printf("Digite a senha do cliente: \n");
+  scanf("%s", senha);
   int auxPos;
   int auxBool = 0;
   for (int i = 0; i < lc->qtd; i++) {
-    if (lc->clientes[i].cpf == cpf && lc->clientes[i].senha == senha) {
+    if (lc->clientes[i].cpf == cpf) {
       auxPos = i;
-      auxBool = 1;
+      if (strcmp(senha, lc->clientes[i].senha) == 0){auxBool = 1;}
     }
   }
   if (auxBool == 1) {
@@ -120,9 +124,7 @@ int deposito(ListaDeClientes *lc, long long int cpf, float valor) {
   }
 };
 
-int transferencia(ListaDeClientes *lc, long long int cpfOrigem, long long int cpfDestino, float valor){
-  printf("CPF origem = %lli\n", cpfOrigem);
-  printf("CPF destino = %lli\n", cpfDestino);
+int transferencia(ListaDeClientes *lc, long long int cpfOrigem, long long int cpfDestino, float valor, char *senha){
   int auxPosOrigem = 0;
   int auxPosDestino = 0;
   int auxBoolOrigem = 0;
@@ -130,13 +132,15 @@ int transferencia(ListaDeClientes *lc, long long int cpfOrigem, long long int cp
   for (int i = 0; i < lc->qtd; i++) {
     printf("i = %d\n", i);
     printf("CPF = %lli\n", lc->clientes[i].cpf);
-    printf("Senha (i) = %s", lc->clientes[i].senha);
+    printf("Senha = %s\n", senha);
+    printf("Senha (i) = %s\n", lc->clientes[i].senha);
     if (lc->clientes[i].cpf == cpfOrigem) {
-      printf("AAA");
+      printf("AAA\n");
       auxPosOrigem = i;
+      if (strcmp(senha, lc->clientes[i].senha) == 0){auxBoolOrigem = 1;}
     }
     else if(lc->clientes[i].cpf == cpfDestino){
-      printf("BBB");
+      printf("BBB\n");
       auxPosDestino = i;
       auxBoolDdestino = 1;
     }
@@ -151,7 +155,7 @@ int transferencia(ListaDeClientes *lc, long long int cpfOrigem, long long int cp
     return 3;
   }
   else if (auxBoolOrigem == 1 && auxBoolDdestino == 1) {
-    float valorDebito = valor + retornaTaxa(lc->clientes[auxPosOrigem].tipo);
+    float valorDebito = valor + valor *(retornaTaxa(lc->clientes[auxPosOrigem].tipo));
     printf("Saldo (origem) antes da transferencia: %f\n", lc->clientes[auxPosOrigem].saldo);
     lc->clientes[auxPosOrigem].saldo = lc->clientes[auxPosOrigem].saldo - valorDebito;
     printf("Saldo (origem) depois da transferência: %f\n-------\n", lc->clientes[auxPosOrigem].saldo);
