@@ -4,11 +4,12 @@
 
 int main() {
   ListaDeClientes lc;
-
+  Extrato ext;
+  
   char strArquivoClientes[] = "ListaDeClientes.bin";
   int codAux, opcao;
 
-  codAux = carregar(&lc, strArquivoClientes);
+  codAux = carregarClientes(&lc, strArquivoClientes);
 
   if (codAux != 0) {
     printf("lista de clientes nao carregada\n");
@@ -43,7 +44,7 @@ int main() {
       scanf("%lld", &cpf);
       printf("Digite o valor que sera debitado: \n");
       scanf("%f", &valor);
-      codAux = debito(&lc, cpf, valor);
+      codAux = debito(&ext, &lc, cpf, valor);
       if (codAux == 0) {
         printf("Operacao realizada com sucesso\n");
       }
@@ -57,7 +58,7 @@ int main() {
       scanf("%lld", &cpf);
       printf("Digite o valor que sera depositado: \n");
       scanf("%f", &valor);
-      codAux = deposito(&lc, cpf, valor);
+      codAux = deposito(&ext, &lc, cpf, valor);
       if (codAux == 0) {
         printf("Operacao realizada com sucesso\n");
       }
@@ -77,7 +78,7 @@ int main() {
       scanf("%lli", &cpfOrigem);
       printf("Digite a senha do cliente de origem: \n");
       scanf("%s", senha);
-      codAux = transferencia(&lc, cpfOrigem, cpfDestino, valor, senha);
+      codAux = transferencia(&ext, &lc, cpfOrigem, cpfDestino, valor, senha);
       if (codAux == 0) {
         printf("Operacao realizada com sucesso\n");
       } else if(codAux == 1){
@@ -92,7 +93,7 @@ int main() {
     }
   } while (opcao != 0);
 
-  codAux = salvar(&lc, strArquivoClientes);
+  codAux = salvarClientes(&lc, strArquivoClientes);
   if (codAux != 0)
     printf("erro ao salvar alteracoes no arquivo");
 }
