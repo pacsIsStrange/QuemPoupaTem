@@ -1,6 +1,6 @@
 #include "lib.h"
 #include <stdio.h>
-#include <string.h>>
+#include <string.h>
 
 int novoCliente(ListaDeClientes *lc) {
   if (lc->qtd >= TOTAL_CLIENTES)
@@ -75,7 +75,7 @@ int listarClientes(ListaDeClientes *lc) {
   return 0;
 }
 
-int debito(ListaDeClientes *lc, long long int cpf, float valor) {
+int debito(Extrato *ext, ListaDeClientes *lc, long long int cpf, float valor) {
   char senha[20];
   printf("Digite a senha do cliente: \n");
   scanf("%s", senha);
@@ -104,7 +104,7 @@ int debito(ListaDeClientes *lc, long long int cpf, float valor) {
   }
 };
 
-int deposito(ListaDeClientes *lc, long long int cpf, float valor) {
+int deposito(Extrato *ext, ListaDeClientes *lc, long long int cpf, float valor) {
   int auxPos;
   int auxBool = 0;
   for (int i = 0; i < lc->qtd; i++) {
@@ -124,7 +124,7 @@ int deposito(ListaDeClientes *lc, long long int cpf, float valor) {
   }
 };
 
-int transferencia(ListaDeClientes *lc, long long int cpfOrigem, long long int cpfDestino, float valor, char *senha){
+int transferencia(Extrato *ext, ListaDeClientes *lc, long long int cpfOrigem, long long int cpfDestino, float valor, char *senha){
   int auxPosOrigem = 0;
   int auxPosDestino = 0;
   int auxBoolOrigem = 0;
@@ -167,7 +167,7 @@ int transferencia(ListaDeClientes *lc, long long int cpfOrigem, long long int cp
   else {return 4;}
 };
 
-int carregar(ListaDeClientes *lc, char *strArquivo) {
+int carregarClientes(ListaDeClientes *lc, char *strArquivo) {
   FILE *f = fopen(strArquivo, "rb");
   if (f == NULL){
     return 1;
@@ -178,7 +178,7 @@ int carregar(ListaDeClientes *lc, char *strArquivo) {
   return 0;
 }
 
-int salvar(ListaDeClientes *lc, char *strArquivo) {
+int salvarClientes(ListaDeClientes *lc, char *strArquivo) {
   FILE *f = fopen(strArquivo, "wb");
   if (f == NULL){
     return 1;
@@ -188,6 +188,20 @@ int salvar(ListaDeClientes *lc, char *strArquivo) {
 
   return 0;
 }
+
+int carregarExtrato(Extrato *ext, char *strArquivo){
+  FILE *f = fopen(strArquivo, "rb");
+    if (f == NULL){
+      return 1;
+    }
+    fread(ext, sizeof(ListaDeClientes), 1, f);
+    fclose(f);
+
+    return 0;
+  }
+};
+
+int salvarExtrato(Extrato *ext, char *strArquivo){};
 
 void copiaString(char string1[], char string2[]) {
   int t1 = tamanho(string1);
