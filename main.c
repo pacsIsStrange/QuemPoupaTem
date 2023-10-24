@@ -10,12 +10,16 @@ int main() {
   int codAux, opcao;
 
   codAux = carregarClientes(&lc, strArquivoClientes);
-
   if (codAux != 0) {
     printf("lista de clientes nao carregada\n");
     lc.qtd = 0;
   }
-
+  /*
+  printf("%d", ext.qtd);
+  for (int i = 0; i < ext.qtd; i++) {
+    printf("Operacao = %s    Valor = %f    Taxa = %f\n", ext.operacoes[i].descricao, ext.operacoes[i].valor, ext.operacoes[i].taxa);
+  }
+  */
   do {
     exibeMenu();
     scanf("%d", &opcao);
@@ -44,7 +48,7 @@ int main() {
       scanf("%lld", &cpf);
       printf("Digite o valor que sera debitado: \n");
       scanf("%f", &valor);
-      codAux = debito(&ext, &lc, cpf, valor);
+      codAux = debito(&lc, cpf, valor);
       if (codAux == 0) {
         printf("Operacao realizada com sucesso\n");
       }
@@ -58,14 +62,19 @@ int main() {
       scanf("%lld", &cpf);
       printf("Digite o valor que sera depositado: \n");
       scanf("%f", &valor);
-      codAux = deposito(&ext, &lc, cpf, valor);
+      codAux = deposito(&lc, cpf, valor);
       if (codAux == 0) {
         printf("Operacao realizada com sucesso\n");
       }
       if (codAux == 1) {
         printf("ERRO: CPF nao encontrado\n");
       }
-    } else if (opcao == 7){
+    } else if(opcao == 6){
+      long long int cpf = 0;
+      printf("Digite o CPF do cliente: \n");
+      scanf("%lld", &cpf);
+      escreveExtrato(&lc, cpf);
+    }else if (opcao == 7){
       char senha[20];
       long long int cpfOrigem;
       long long int cpfDestino;
@@ -78,7 +87,7 @@ int main() {
       scanf("%lli", &cpfOrigem);
       printf("Digite a senha do cliente de origem: \n");
       scanf("%s", senha);
-      codAux = transferencia(&ext, &lc, cpfOrigem, cpfDestino, valor, senha);
+      codAux = transferencia(&lc, cpfOrigem, cpfDestino, valor, senha);
       if (codAux == 0) {
         printf("Operacao realizada com sucesso\n");
       } else if(codAux == 1){
@@ -94,6 +103,8 @@ int main() {
   } while (opcao != 0);
 
   codAux = salvarClientes(&lc, strArquivoClientes);
-  if (codAux != 0)
-    printf("erro ao salvar alteracoes no arquivo");
+  if (codAux != 0){
+    printf("erro ao salvar alteracoes de clientes no arquivo");
+  }
+  
 }
