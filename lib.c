@@ -1,6 +1,6 @@
 #include "lib.h"
 #include <stdio.h>
-#include <string.h>>
+#include <string.h>
 
 int novoCliente(ListaDeClientes *lc) {
   if (lc->qtd >= TOTAL_CLIENTES)
@@ -23,8 +23,12 @@ int novoCliente(ListaDeClientes *lc) {
   printf("Digite a senha do cliente: \n");
   scanf("%s", c->senha);
 
+  c->ext.qtd = 0;
+  
   lc->qtd++;
 
+  printf("nome = %s\ncpf = %lld\ntipo = %d\nsaldo = %f\nsenha = %s\nqtdExtrato = %d\ndesc-ext.op = %s\nvalor-ext.op = %f\ntaxa-ext.op = %f\n", lc->clientes[lc->qtd].nome, lc->clientes[lc->qtd].cpf, lc->clientes[lc->qtd].tipo, lc->clientes[lc->qtd].saldo, lc->clientes[lc->qtd].senha, lc->clientes[lc->qtd].ext.qtd, lc->clientes[lc->qtd].ext.operacoes[lc->clientes->ext.qtd].descricao, lc->clientes[lc->qtd].ext.operacoes[lc->clientes->ext.qtd].valor, lc->clientes[lc->qtd].ext.operacoes[lc->clientes->ext.qtd].taxa);
+  
   return 0;
 }
 
@@ -56,6 +60,7 @@ int apagaCliente(ListaDeClientes *lc) {
 
   return 0;
 }
+
 int listarClientes(ListaDeClientes *lc) {
   if (lc->qtd == 0)
     return 1;
@@ -88,21 +93,27 @@ int debito(ListaDeClientes *lc, long long int cpf, float valor) {
     }
   }
   if (auxBool == 1) {
-    float valorFinal = valor + (valor * retornaTaxa(lc->clientes[auxPos].tipo));
+    int auxPos;
+    double valorFinal = valor + (valor * retornaTaxa(lc->clientes[auxPos].tipo));
     printf("Valor final debitado: %f\n", valorFinal);
     printf("Saldo antes: %f\n", lc->clientes[auxPos].saldo);
     lc->clientes[auxPos].saldo = lc->clientes[auxPos].saldo - valorFinal;
     printf("Saldo atualizado: %f\n", lc->clientes[auxPos].saldo);
-    return 0;
-  }
+    char desc[20] = "Debito";
+    strcpy(lc->clientes[auxPos].ext.operacoes[lc->clientes[auxPos].ext.qtd].descricao, desc);
+    lc->clientes[auxPos].ext.operacoes[lc->clientes[auxPos].ext.qtd].valor = valorFinal;
+    lc->clientes[auxPos].ext.operacoes[lc->clientes[auxPos].ext.qtd].taxa = retornaTaxa(lc->clientes[auxPos].tipo);
+    
+    lc->clientes[auxPos].ext.qtd++;
 
-  if (auxBool == 0) {
+    return 0;
+    } else if(auxBool == 0) {
     return 1;
   } else if (auxBool != 1 && auxBool != 0) {
     printf("auxBool = %d\n", auxBool);
     return 2;
   }
-};
+}
 
 int deposito(ListaDeClientes *lc, long long int cpf, float valor) {
   int auxPos;
@@ -120,9 +131,37 @@ int deposito(ListaDeClientes *lc, long long int cpf, float valor) {
     printf("Saldo antes: %f\n", lc->clientes[auxPos].saldo);
     lc->clientes[auxPos].saldo = lc->clientes[auxPos].saldo + valor;
     printf("Saldo atualizado: %f\n", lc->clientes[auxPos].saldo);
+    char desc[20] = "Deposito";
+    strcpy(lc->clientes[auxPos].ext.operacoes[lc->clientes[auxPos].ext.qtd].descricao, desc);
+    lc->clientes[auxPos].ext.operacoes[lc->clientes[auxPos].ext.qtd].valor = valor;
+    lc->clientes[auxPos].ext.operacoes[lc->clientes[auxPos].ext.qtd].taxa = 0;
+
+    lc->clientes[auxPos].ext.qtd++;
     return 0;
   }
-};
+}
+
+int escreveExtrato(ListaDeClientes *lc, long long int cpf){
+  char senha[20];
+  printf("Digite a senha do cliente: \n");
+  scanf("%s", senha);
+  int auxPos;
+  int auxBool = 0;
+  for (int i = 0; i < lc->qtd; i++) {
+    if (lc->clientes[i].cpf == cpf) {
+      auxPos = i;
+      if (strcmp(senha, lc->clientes[i].senha) == 0){auxBool = 1;}
+    }
+  }
+  if (auxBool == 1){
+    FILE *f = fopen("extrato.txt", "w");
+    fprintf(f, "--- EXTRATO DO CLIENTE %s ---\nCPF = %lld\n", lc->clientes[auxPos].nome, lc->clientes[auxPos].cpf);
+    for(int i = 0; i < lc->clientes[i].ext.qtd; i++){
+      fprintf(f, "Operacao = %s    Valor = %f    Taxa = %f\n", lc->clientes[auxPos].ext.operacoes[i].descricao, lc->clientes[auxPos].ext.operacoes[i].valor, lc->clientes[auxPos].ext.operacoes[i].taxa);
+    }
+  return 0;
+  }
+}
 
 int transferencia(ListaDeClientes *lc, long long int cpfOrigem, long long int cpfDestino, float valor, char *senha){
   int auxPosOrigem = 0;
@@ -135,12 +174,10 @@ int transferencia(ListaDeClientes *lc, long long int cpfOrigem, long long int cp
     printf("Senha = %s\n", senha);
     printf("Senha (i) = %s\n", lc->clientes[i].senha);
     if (lc->clientes[i].cpf == cpfOrigem) {
-      printf("AAA\n");
       auxPosOrigem = i;
       if (strcmp(senha, lc->clientes[i].senha) == 0){auxBoolOrigem = 1;}
     }
     else if(lc->clientes[i].cpf == cpfDestino){
-      printf("BBB\n");
       auxPosDestino = i;
       auxBoolDdestino = 1;
     }
@@ -162,12 +199,27 @@ int transferencia(ListaDeClientes *lc, long long int cpfOrigem, long long int cp
     printf("Saldo (destino) antes da transferencia: %f\n", lc->clientes[auxPosDestino].saldo);
     lc->clientes[auxPosDestino].saldo = lc->clientes[auxPosDestino].saldo + valor;
     printf("Saldo (destino) depois da transferencia: %f\n", lc->clientes[auxPosDestino].saldo);
+
+    char desc1[20] = "Transferencia-origem";
+    strcpy(lc->clientes[auxPosOrigem].ext.operacoes[lc->clientes[auxPosOrigem].ext.qtd].descricao, desc1);
+    lc->clientes[auxPosOrigem].ext.operacoes[lc->clientes[auxPosOrigem].ext.qtd].valor = valorDebito;
+    lc->clientes[auxPosOrigem].ext.operacoes[lc->clientes[auxPosOrigem].ext.qtd].taxa = retornaTaxa(lc->clientes[auxPosOrigem].tipo);
+
+    lc->clientes[auxPosOrigem].ext.qtd++;
+
+    char desc2[20] = "Transferencia-dest";
+    strcpy(lc->clientes[auxPosDestino].ext.operacoes[lc->clientes[auxPosDestino].ext.qtd].descricao, desc2);
+    lc->clientes[auxPosDestino].ext.operacoes[lc->clientes[auxPosDestino].ext.qtd].valor = valorDebito;
+    lc->clientes[auxPosDestino].ext.operacoes[lc->clientes[auxPosDestino].ext.qtd].taxa = 0;
+
+    lc->clientes[auxPosDestino].ext.qtd++;
+    
     return 0;
   }
   else {return 4;}
 };
 
-int carregar(ListaDeClientes *lc, char *strArquivo) {
+int carregarClientes(ListaDeClientes *lc, char *strArquivo) {
   FILE *f = fopen(strArquivo, "rb");
   if (f == NULL){
     return 1;
@@ -178,7 +230,7 @@ int carregar(ListaDeClientes *lc, char *strArquivo) {
   return 0;
 }
 
-int salvar(ListaDeClientes *lc, char *strArquivo) {
+int salvarClientes(ListaDeClientes *lc, char *strArquivo) {
   FILE *f = fopen(strArquivo, "wb");
   if (f == NULL){
     return 1;
@@ -188,6 +240,28 @@ int salvar(ListaDeClientes *lc, char *strArquivo) {
 
   return 0;
 }
+
+int carregarExtrato(Extrato *ext, char *strArquivo){
+  FILE *f = fopen(strArquivo, "rb");
+    if (f == NULL){
+      return 1;
+    }
+    fread(ext, sizeof(Extrato), 1, f);
+    fclose(f);
+
+    return 0;
+  }
+
+int salvarExtrato(Extrato *ext, char *strArquivo){
+  FILE *f = fopen(strArquivo, "wb");
+  if (f == NULL){
+    return 1;
+  }
+  fwrite(ext, sizeof(Extrato), 1, f);
+  fclose(f);
+
+  return 0;
+};
 
 void copiaString(char string1[], char string2[]) {
   int t1 = tamanho(string1);

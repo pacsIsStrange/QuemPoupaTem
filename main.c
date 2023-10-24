@@ -4,17 +4,22 @@
 
 int main() {
   ListaDeClientes lc;
-
+  Extrato ext;
+  
   char strArquivoClientes[] = "ListaDeClientes.bin";
   int codAux, opcao;
 
-  codAux = carregar(&lc, strArquivoClientes);
-
+  codAux = carregarClientes(&lc, strArquivoClientes);
   if (codAux != 0) {
     printf("lista de clientes nao carregada\n");
     lc.qtd = 0;
   }
-
+  /*
+  printf("%d", ext.qtd);
+  for (int i = 0; i < ext.qtd; i++) {
+    printf("Operacao = %s    Valor = %f    Taxa = %f\n", ext.operacoes[i].descricao, ext.operacoes[i].valor, ext.operacoes[i].taxa);
+  }
+  */
   do {
     exibeMenu();
     scanf("%d", &opcao);
@@ -64,7 +69,12 @@ int main() {
       if (codAux == 1) {
         printf("ERRO: CPF nao encontrado\n");
       }
-    } else if (opcao == 7){
+    } else if(opcao == 6){
+      long long int cpf = 0;
+      printf("Digite o CPF do cliente: \n");
+      scanf("%lld", &cpf);
+      escreveExtrato(&lc, cpf);
+    }else if (opcao == 7){
       char senha[20];
       long long int cpfOrigem;
       long long int cpfDestino;
@@ -92,7 +102,9 @@ int main() {
     }
   } while (opcao != 0);
 
-  codAux = salvar(&lc, strArquivoClientes);
-  if (codAux != 0)
-    printf("erro ao salvar alteracoes no arquivo");
+  codAux = salvarClientes(&lc, strArquivoClientes);
+  if (codAux != 0){
+    printf("erro ao salvar alteracoes de clientes no arquivo");
+  }
+  
 }
