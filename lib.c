@@ -49,11 +49,11 @@ int apagaCliente(ListaDeClientes *lc) {
   }
 
   for (; auxPos < lc->qtd - 1; auxPos++) {
-    copiaString(lc->clientes[auxPos].nome, lc->clientes[auxPos + 1].nome);
+    strcpy(lc->clientes[auxPos].nome, lc->clientes[auxPos + 1].nome);
     lc->clientes[auxPos].cpf = lc->clientes[auxPos + 1].cpf;
     lc->clientes[auxPos].tipo = lc->clientes[auxPos + 1].tipo;
     lc->clientes[auxPos].saldo = lc->clientes[auxPos + 1].saldo;
-    copiaString(lc->clientes[auxPos].senha, lc->clientes[auxPos + 1].senha);
+    strcpy(lc->clientes[auxPos].senha, lc->clientes[auxPos + 1].senha);
   }
 
   lc->qtd--;
@@ -92,8 +92,8 @@ int debito(ListaDeClientes *lc, long long int cpf, float valor) {
       if (strcmp(senha, lc->clientes[i].senha) == 0){auxBool = 1;}
     }
   }
-  if (auxBool == 1) {
-    int auxPos;
+  float valorFinal = valor + (valor * retornaTaxa(lc->clientes[auxPos].tipo));
+  if (auxBool == 1 && retornaBoolLimite(lc, valorFinal, auxPos)) {
     double valorFinal = valor + (valor * retornaTaxa(lc->clientes[auxPos].tipo));
     printf("Valor final debitado: %f\n", valorFinal);
     printf("Saldo antes: %f\n", lc->clientes[auxPos].saldo);
@@ -112,7 +112,7 @@ int debito(ListaDeClientes *lc, long long int cpf, float valor) {
   } else if (auxBool != 1 && auxBool != 0) {
     printf("auxBool = %d\n", auxBool);
     return 2;
-  }
+  } else if (retornaBoolLimite(lc, valorFinal, auxPos) == 0) {printf("saldo insuficiente para realizar a operacao\n");}
 }
 
 int deposito(ListaDeClientes *lc, long long int cpf, float valor) {
@@ -182,6 +182,7 @@ int transferencia(ListaDeClientes *lc, long long int cpfOrigem, long long int cp
       auxBoolDdestino = 1;
     }
   }
+  float valorDebito = valor + valor *(retornaTaxa(lc->clientes[auxPosOrigem].tipo));
   if (auxBoolOrigem == 0 && auxBoolDdestino == 0) {
     return 1;
   }
@@ -191,8 +192,7 @@ int transferencia(ListaDeClientes *lc, long long int cpfOrigem, long long int cp
   else if (auxBoolOrigem == 0 && auxBoolDdestino == 1) {
     return 3;
   }
-  else if (auxBoolOrigem == 1 && auxBoolDdestino == 1) {
-    float valorDebito = valor + valor *(retornaTaxa(lc->clientes[auxPosOrigem].tipo));
+  else if (auxBoolOrigem == 1 && auxBoolDdestino == 1 && retornaBoolLimite(lc, valorDebito, auxPosOrigem)) {
     printf("Saldo (origem) antes da transferencia: %f\n", lc->clientes[auxPosOrigem].saldo);
     lc->clientes[auxPosOrigem].saldo = lc->clientes[auxPosOrigem].saldo - valorDebito;
     printf("Saldo (origem) depois da transferência: %f\n-------\n", lc->clientes[auxPosOrigem].saldo);
@@ -215,9 +215,10 @@ int transferencia(ListaDeClientes *lc, long long int cpfOrigem, long long int cp
     lc->clientes[auxPosDestino].ext.qtd++;
     
     return 0;
-  }
-  else {return 4;}
-};
+  } else if (retornaBoolLimite(lc, valorDebito, auxPosOrigem)){
+    printf("saldo insuficiente na conta de origem para realizar a operacao.\n");
+  } else {return 4;}
+}
 
 int carregarClientes(ListaDeClientes *lc, char *strArquivo) {
   FILE *f = fopen(strArquivo, "rb");
@@ -263,17 +264,15 @@ int salvarExtrato(Extrato *ext, char *strArquivo){
   return 0;
 };
 
-void copiaString(char string1[], char string2[]) {
-  int t1 = tamanho(string1);
-  int len = t1;
-  int t2 = tamanho(string2);
-  if (t2 < t1) {
-    printf("Erro: string receptora menor do que o necessário");
-  } else {
-    for (int i = 0; i < len; i++) {
-      string2[i] = string1[i];
-    }
-  }
+int retornaBoolLimite(ListaDeClientes *lc, float valor, int auxPos){
+  float limite = 0;
+  if (lc->clientes[auxPos].tipo == 1){
+    limite = (-1000.00);
+  } else if (lc->clientes[auxPos].tipo == 2){
+    limite = (-5000.00);
+  } else {printf("erro desconhecido, verificar tipo da conta do cliente.\n");}
+  if (lc->clientes[auxPos].saldo - valor >= limite){return 1;}
+  else {return 0;}
 }
 
 void exibeMenu() {
