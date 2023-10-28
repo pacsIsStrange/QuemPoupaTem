@@ -3,11 +3,11 @@
 #include <string.h>
 
 int novoCliente(ListaDeClientes *lc) {
-  if (lc->qtd >= TOTAL_CLIENTES)
+  if (lc->qtd >= TOTAL_CLIENTES) // VERIFICA SE O NÚMERO DE CLIENTES NA LISTA ULTRAPASSA O LIMITE ESTABELECIDO DE 1000
     return 1;
-
-  Cliente *c = &lc->clientes[lc->qtd];
-
+  
+  Cliente *c = &lc->clientes[lc->qtd]; // GUARDA A STRUCT DO TIPO 'Cliente' PRESENTE NA POSIÇÃO '[lc->qtd]' (OU SEJA, NA PRIMEIRA POSIÇÃO APÓS O ÚLTIMO CLIENTE CADASTRADO) NA VARIAVEL 'c'
+// ATRIBUI OS INPUTS DO USUÁRIO NOS DEVIDOS ELEMENTOS DA STRUCT 'c'
   printf("Digite o nome do cliente: \n");
   scanf("%s", c->nome);
 
@@ -23,20 +23,18 @@ int novoCliente(ListaDeClientes *lc) {
   printf("Digite a senha do cliente: \n");
   scanf("%s", c->senha);
 
-  c->ext.qtd = 0;
+  c->ext.qtd = 0; // DEFINE A QUANTIDADE DE OPERAÇÕES ON EXTRATO DO CLIENTE COMO 0
   
-  lc->qtd++;
-
-  printf("nome = %s\ncpf = %lld\ntipo = %d\nsaldo = %f\nsenha = %s\nqtdExtrato = %d\ndesc-ext.op = %s\nvalor-ext.op = %f\ntaxa-ext.op = %f\n", lc->clientes[lc->qtd].nome, lc->clientes[lc->qtd].cpf, lc->clientes[lc->qtd].tipo, lc->clientes[lc->qtd].saldo, lc->clientes[lc->qtd].senha, lc->clientes[lc->qtd].ext.qtd, lc->clientes[lc->qtd].ext.operacoes[lc->clientes->ext.qtd].descricao, lc->clientes[lc->qtd].ext.operacoes[lc->clientes->ext.qtd].valor, lc->clientes[lc->qtd].ext.operacoes[lc->clientes->ext.qtd].taxa);
+  lc->qtd++; // AUMENTA A QUANTIDADE DE CLIENTES REGISTRADOS NA LISTA
   
   return 0;
 }
 
 int apagaCliente(ListaDeClientes *lc) {
-  if (lc->qtd == 0) {
+  if (lc->qtd == 0) { // VERIFICA SE O NÚMERO DE CLIENTES É IGUAL A ZER0 (OU SEJA, SE NÃO HÁ CLIENTES CADASTRADOS NA LISTA)
     return 1;
   }
-  int auxBool = 0;
+  int auxBool = 0; // VARIÁVEL BOOLEANA REFERENTE AO ENCONTRO OU NÃO DO CPF DIGITADO PELO USUÁRIO NA LISTA
   int auxPos = (lc->qtd + 1);
   long long int cpf;
   printf("Digite o cpf do cliente que deseja deletar: \n");
@@ -44,10 +42,9 @@ int apagaCliente(ListaDeClientes *lc) {
   for (int i = 0; i < lc->qtd; i++) {
     if (lc->clientes[i].cpf == cpf) {
       auxPos = i;
-      printf("Cpf encontrado na posicao %d (auxpos = %d)\n", i, auxPos);
     }
   }
-
+// ITERAÇÃO PARA GUARDAR AS INFORMAÇÕES DO CLIENTE NA POSIÇÃO SEGUINTE AOS CLIENTES DA LISTA NA STRUCT DA POSIÇÃO DO PRÓRPIO CLIENTE, A PARTIR DA POSIÇÃO EM QUE O CPF DIGITADO PELO USUÁRIO FOI ENCONTRADO
   for (; auxPos < lc->qtd - 1; auxPos++) {
     strcpy(lc->clientes[auxPos].nome, lc->clientes[auxPos + 1].nome);
     lc->clientes[auxPos].cpf = lc->clientes[auxPos + 1].cpf;
@@ -56,15 +53,15 @@ int apagaCliente(ListaDeClientes *lc) {
     strcpy(lc->clientes[auxPos].senha, lc->clientes[auxPos + 1].senha);
   }
 
-  lc->qtd--;
+  lc->qtd--; // DIMINUI O NÚMERO DE CLIENTES NA LISTA, PARA QUE CASO SEJA REGISTRADO UM NOVO CLIENTE NÃO HAJA UM ESPAÇO VAZIO NA LISTA DE CLIENTES
 
   return 0;
 }
 
 int listarClientes(ListaDeClientes *lc) {
-  if (lc->qtd == 0)
+  if (lc->qtd == 0){
     return 1;
-
+  }
   for (int i = 0; i < lc->qtd; i++) {
     printf("--- CLIENTE NUMERO %d ---\nNome: %s\nCPF: %lld\nSaldo: %f\n", i + 1,
            lc->clientes[i].nome, lc->clientes[i].cpf, lc->clientes[i].saldo);
@@ -85,15 +82,15 @@ int debito(ListaDeClientes *lc, long long int cpf, float valor) {
   printf("Digite a senha do cliente: \n");
   scanf("%s", senha);
   int auxPos;
-  int auxBool = 0;
+  int auxBool = 0; // VARIÁVEL BOOLEANA REFERENTE AO ENCONTRO E VALIDAÇÃO DO CPF E SENHA DIGITADOS PELO USUÁRIO
   for (int i = 0; i < lc->qtd; i++) {
     if (lc->clientes[i].cpf == cpf) {
       auxPos = i;
       if (strcmp(senha, lc->clientes[i].senha) == 0){auxBool = 1;}
     }
   }
-  float valorFinal = valor + (valor * retornaTaxa(lc->clientes[auxPos].tipo));
-  if (auxBool == 1 && retornaBoolLimite(lc, valorFinal, auxPos)) {
+  float valorFinal = valor + (valor * retornaTaxa(lc->clientes[auxPos].tipo)); // ADICIONA A TAXA AO VALOR DO DÉBITO
+  if (auxBool == 1 && retornaBoolLimite(lc, valorFinal, auxPos)) { // CHAMA A FUNÇÃO 'retornaBoolLimite' PARA VERIFICAR SE O SALDO DO CLIENTE ATENDE OS LIMITES DE SALDO ESTABELECIDOS PARA O TIPO DE CONTA DELE
     double valorFinal = valor + (valor * retornaTaxa(lc->clientes[auxPos].tipo));
     printf("Valor final debitado: %f\n", valorFinal);
     printf("Saldo antes: %f\n", lc->clientes[auxPos].saldo);
@@ -117,7 +114,7 @@ int debito(ListaDeClientes *lc, long long int cpf, float valor) {
 
 int deposito(ListaDeClientes *lc, long long int cpf, float valor) {
   int auxPos;
-  int auxBool = 0;
+  int auxBool = 0; // VARIÁVEL BOOLEANA REFERENTE AO ENCONTRO E VALIDAÇÃO DO CPF DIGITADO PELO USUÁRIO
   for (int i = 0; i < lc->qtd; i++) {
     if (lc->clientes[i].cpf == cpf) {
       auxPos = i;
