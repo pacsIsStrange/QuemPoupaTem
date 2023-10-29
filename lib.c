@@ -152,16 +152,17 @@ int escreveExtrato(ListaDeClientes *lc, long long int cpf){
     }
   }
   if (auxBool == 1){
-    FILE *f = fopen("extrato.txt", "w");
+    FILE *f = fopen("extrato.txt", "w"); // ABRE O ARQUIVO 'extrato.txt' NO MODO DE ESCRITA
     fprintf(f, "--- EXTRATO DO CLIENTE %s ---\nCPF = %lld\n", lc->clientes[auxPos].nome, lc->clientes[auxPos].cpf);
     for(int i = 0; i < lc->clientes[i].ext.qtd; i++){
       fprintf(f, "Operacao = %s    Valor = %f    Taxa = %f\n", lc->clientes[auxPos].ext.operacoes[i].descricao, lc->clientes[auxPos].ext.operacoes[i].valor, lc->clientes[auxPos].ext.operacoes[i].taxa);
     }
+    fclose(f); // FECHA O ARQUIVO PARA SALVAR AS MUDANÇAS
   return 0;
   }
 }
 
-int transferencia(ListaDeClientes *lc, long long int cpfOrigem, long long int cpfDestino, float valor, char *senha){
+int transferencia(ListaDeClientes *lc, long long int cpfOrigem, long long int cpfDestino, float valor, char *senha){ // ESSENCIALMENTE UMA MISTURA DAS FUNÇÕES DE DÉBITO E DEPÓSITO
   int auxPosOrigem = 0;
   int auxPosDestino = 0;
   int auxBoolOrigem = 0;
@@ -197,7 +198,7 @@ int transferencia(ListaDeClientes *lc, long long int cpfOrigem, long long int cp
     printf("Saldo (destino) antes da transferencia: %f\n", lc->clientes[auxPosDestino].saldo);
     lc->clientes[auxPosDestino].saldo = lc->clientes[auxPosDestino].saldo + valor;
     printf("Saldo (destino) depois da transferencia: %f\n", lc->clientes[auxPosDestino].saldo);
-
+    // ESCREVE AS INFORMAÇÕES DA OPERAÇÃO NOS EXTRATOS DE AMBOS OS CLIENTES ENVOLVIDOS
     char desc1[20] = "Transferencia-origem";
     strcpy(lc->clientes[auxPosOrigem].ext.operacoes[lc->clientes[auxPosOrigem].ext.qtd].descricao, desc1);
     lc->clientes[auxPosOrigem].ext.operacoes[lc->clientes[auxPosOrigem].ext.qtd].valor = valorDebito;
@@ -219,50 +220,28 @@ int transferencia(ListaDeClientes *lc, long long int cpfOrigem, long long int cp
 }
 
 int carregarClientes(ListaDeClientes *lc, char *strArquivo) {
-  FILE *f = fopen(strArquivo, "rb");
+  FILE *f = fopen(strArquivo, "rb"); // ABRE O ARQUIVO NO MODO DE LEITURA BINÁRIA
   if (f == NULL){
     return 1;
   }
-  fread(lc, sizeof(ListaDeClientes), 1, f);
+  fread(lc, sizeof(ListaDeClientes), 1, f); // LÊ A SCTRUCT PRESENTE NO ARQUIVO BRINÁRIO E ARMAZENA NA VARIÁVEL 'lc' 
   fclose(f);
 
   return 0;
 }
 
 int salvarClientes(ListaDeClientes *lc, char *strArquivo) {
-  FILE *f = fopen(strArquivo, "wb");
+  FILE *f = fopen(strArquivo, "wb"); // ABRE O ARQUIVO NO MODO DE ESCRITA BINÁRIA
   if (f == NULL){
     return 1;
   }
-  fwrite(lc, sizeof(ListaDeClientes), 1, f);
+  fwrite(lc, sizeof(ListaDeClientes), 1, f); // SOBRESCREVE O CONTEÚDO DO ARQUIVO COM A STRUCT DA VARIÁVEL 'lc'
   fclose(f);
 
   return 0;
 }
 
-int carregarExtrato(Extrato *ext, char *strArquivo){
-  FILE *f = fopen(strArquivo, "rb");
-    if (f == NULL){
-      return 1;
-    }
-    fread(ext, sizeof(Extrato), 1, f);
-    fclose(f);
-
-    return 0;
-  }
-
-int salvarExtrato(Extrato *ext, char *strArquivo){
-  FILE *f = fopen(strArquivo, "wb");
-  if (f == NULL){
-    return 1;
-  }
-  fwrite(ext, sizeof(Extrato), 1, f);
-  fclose(f);
-
-  return 0;
-};
-
-int retornaBoolLimite(ListaDeClientes *lc, float valor, int auxPos){
+int retornaBoolLimite(ListaDeClientes *lc, float valor, int auxPos){ // VERIFICA SE A CONTA DO CLIENTE ATENDE OS REQUISITOS MÍNIMOS DE SALDO PARA REALIZAR UMA OPERAÇÃO A PARTIR DOS LIMITES ESTABELECIDOS PARA CADA TIPO DA CONTA DO CLIENTE
   float limite = 0;
   if (lc->clientes[auxPos].tipo == 1){
     limite = (-1000.00);
@@ -285,15 +264,7 @@ void exibeMenu() {
   printf("0. Sair\n");
 }
 
-int tamanho(char string[]) {
-  int aux = 0;
-  for (int i = 0; string[i] != '\0'; i++) {
-    aux += 1;
-  }
-  return aux;
-}
-
-float retornaTaxa(int tipo) {
+float retornaTaxa(int tipo) { // RETORNA O VALOR DA TAXA QUE SERÁ APLICADA À OPERAÇÃO DE ACORDO COM O TIPO DA CONTA DO CLIENTE
   if (tipo == 1) {
     return 0.05;
   } else if (tipo == 2) {
