@@ -3,8 +3,8 @@
 #include <string.h>
 
 int main() {
+
   ListaDeClientes lc;
-  Extrato ext;
   
   char strArquivoClientes[] = "ListaDeClientes.bin";
   int codAux, opcao;
@@ -13,17 +13,12 @@ int main() {
   if (codAux != 0) {
     printf("lista de clientes nao carregada\n");
     lc.qtd = 0;
-  }
-  /*
-  printf("%d", ext.qtd);
-  for (int i = 0; i < ext.qtd; i++) {
-    printf("Operacao = %s    Valor = %f    Taxa = %f\n", ext.operacoes[i].descricao, ext.operacoes[i].valor, ext.operacoes[i].taxa);
-  }
-  */
-  do {
-    exibeMenu();
-    scanf("%d", &opcao);
 
+  do { // LOOP PARA EXIBIÇÃO CONTÍNUA DO MENU ATÉ QUE O USUÁRIO DECIDA SAIR
+    exibeMenu();
+    scanf("%d", &opcao); // ARMAZENA A OPÇÃO ESCOLHIDA PELO USUÁRIO
+    // AS VARIÁVEIS 'codAux' ARMAZENAM O CÓDIGO RETORNADO PELA FUNÇÃO (PARA DETERMINAR O QUE PODE TER ORIGINADO UM ERRO, POR EXEMPLO)
+    // A PARTIR DAQUI SÃO EXECUTADAS AS FUNÇÕES DE ACORDO COM A OPÇÃO ESCOLHIDA PELO USUÁRIO
     if (opcao == 0) {
     } else if (opcao == 1) {
       codAux = novoCliente(&lc);
