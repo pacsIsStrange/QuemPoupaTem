@@ -35,7 +35,6 @@ int transferencia(ListaDeClientes *lc, long long int cpfOrigem, long long int cp
 int carregarClientes(ListaDeClientes *lc, char *strArquivo);
 int salvarClientes(ListaDeClientes *lc, char *strArquivo);
 void copiaString(char string1[], char string2[]);
-int tamanho(char string[]);
 float retornaTaxa(int tipo);
 int retornaBoolLimite(ListaDeClientes *lc, float valor, int auxPos);
 
