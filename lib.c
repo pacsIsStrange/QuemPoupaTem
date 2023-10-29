@@ -62,6 +62,7 @@ int listarClientes(ListaDeClientes *lc) {
   if (lc->qtd == 0){
     return 1;
   }
+  // ITERAÇÃO PARA EXIBIR AS INFORMAÇÕES DAS STRUCTS DO TIPO 'Cliente' PRESENTES NA LSTA
   for (int i = 0; i < lc->qtd; i++) {
     printf("--- CLIENTE NUMERO %d ---\nNome: %s\nCPF: %lld\nSaldo: %f\n", i + 1,
            lc->clientes[i].nome, lc->clientes[i].cpf, lc->clientes[i].saldo);
