@@ -13,7 +13,7 @@ Trabalho Prático — Banco QuemPoupaTem.
 
 Este projeto foi realizado pela matéria de Desenvolvimento de Algorítimos, no curso de Ciência da Computação pelo Centro Universitário FEI, ministrado pelo professor Leonardo Anjoletto Ferreira.
 
-A proposta do trabalho é criar u sistema para um banco que trabalhe com 2 tipos de conta, a conta Comum que tem os requisitos de cobrar uma taxa de 5% dos débitos realizados, e um limite negativo de R$1000, e a conta Plus que cobra uma taxa de 3% dos débitos e permite um saldo negativo de R$5000. O programa deve ser feito somente na linguagem C.
+A proposta do trabalho é criar um sistema para um banco que trabalhe com 2 tipos de conta, a conta Comum que tem os requisitos de cobrar uma taxa de 5% dos débitos realizados, e um limite negativo de R$1000, e a conta Plus que cobra uma taxa de 3% dos débitos e permite um saldo negativo de R$5000. O programa deve ser feito somente na linguagem C.
 
 O sistema do banco deve rodar em loop e parar quando o usuário seleciona a opção de sair. Mesmo depois do usuário sair ele consegue retomar por salvarmos suas ações utilizando um arquivo com criptografia binária. 
 As opções fornecidas ao usuário são: Novo cliente(cadastra um novo cliente utilizando seu CPF, nome, tipo, valor da conta e senha); Apagar cliente(deleta o cliente e seu histórico do banco); Lista de clientes(mostra todos os clientes cadastrados); Débito(pede os dados do cliente e o valor que ele deseja); Depósito(pede os dados do cliente); Extrato(pede os dados do cliente para poder mostrar seu extrato bancário), Transferência entre contas(pede os dados do cliente e os dados da conta que o dinheiro sera enviado) e sair. Cada uma dessas opções foi implementada com uma função diferente.
