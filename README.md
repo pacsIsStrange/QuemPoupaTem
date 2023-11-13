@@ -1,7 +1,7 @@
 # QuemPoupaTem
 Project - QuemPoupaTem Bank System.
 
- This project was carried out in the subject of Algorithm Development, in the Computer Science course at the FEI University Center, taught by Professor Leonardo Anjoletto Ferreira.
+This project was carried out in the Algorithm Development class, in the Computer Science course at the FEI University Center, taught by Professor Leonardo Anjoletto Ferreira.
 
 The purpose of the work is to create a system for a bank that works with 2 types of account, the Common account which has the requirements of charging a fee of 5% of debits made, and a negative limit of R$1000, and the Plus account which charges a fee of 3% of debits and allows a negative balance of R$5000. The program must only be written in the C language.
 
@@ -11,7 +11,7 @@ In the system we can store up to 1000 customers and keep a history of 100 action
 
 Trabalho Prático — Banco QuemPoupaTem.
 
- Este projeto foi realizado na matéria de Desenvolvimento de Algorítimos, no curso de Ciência da Computação pelo Centro Universitário FEI, ministrado pelo professor Leonardo Anjoletto Ferreira.
+Este projeto foi realizado pela matéria de Desenvolvimento de Algorítimos, no curso de Ciência da Computação pelo Centro Universitário FEI, ministrado pelo professor Leonardo Anjoletto Ferreira.
 
 A proposta do trabalho é criar u sistema para um banco que trabalhe com 2 tipos de conta, a conta Comum que tem os requisitos de cobrar uma taxa de 5% dos débitos realizados, e um limite negativo de R$1000, e a conta Plus que cobra uma taxa de 3% dos débitos e permite um saldo negativo de R$5000. O programa deve ser feito somente na linguagem C.
 
